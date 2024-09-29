@@ -1,7 +1,13 @@
 import pytest
+from endpoints.get_token import GetToken
 from endpoints.create_meme import CreateMeme
 from endpoints.update_meme import UpdateMeme
 from endpoints.delete_meme import DeleteMeme
+
+
+@pytest.fixture
+def auth_token_endpoint():
+    return GetToken()
 
 
 @pytest.fixture()

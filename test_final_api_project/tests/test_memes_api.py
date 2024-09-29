@@ -17,8 +17,8 @@ TEST_DATA_NEGATIVE = [
 @allure.story('Story 1')
 @allure.title('Test for Feature 1 and Story 1')
 @pytest.mark.parametrize('data', TEST_DATA)
-def test_meme_create(create_meme_endpoint, data, start_complete, before_after_every_test):
-    create_meme_endpoint.create_new_meme(payload=data)
+def test_meme_create(auth_token_endpoint, create_meme_endpoint, data, start_complete, before_after_every_test):
+    create_meme_endpoint.create_new_meme(payload=data, headers=auth_token_endpoint)
     create_meme_endpoint.check_that_status_is_200()
     create_meme_endpoint.check_response_title_is_correct(data['title'])
 

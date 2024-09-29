@@ -2,10 +2,14 @@ import allure
 
 
 class Endpoint:
-    url = 'https://fakestoreapi.com/products'
+    url = 'http://167.172.172.115:52355'
     response = None
     json = None
     headers = {'Content-type': 'application/json'}
+
+
+
+
 
     @allure.step('Check that title is the same as sent')
     def check_response_title_is_correct(self, title):
