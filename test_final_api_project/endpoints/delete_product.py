@@ -1,0 +1,17 @@
+import requests
+import allure
+
+from test_final_api_project.endpoints.endpoint import Endpoint
+
+
+class DeleteProduct(Endpoint):
+
+    @allure.step('Delete a product')
+    def make_delete_product(self, post_id, headers=None):
+        headers = headers if headers else self.headers
+        self.response = requests.delete(
+            f'{self.url}/{post_id}',
+            headers=headers
+        )
+        self.json = self.response.json()
+        return self.response
