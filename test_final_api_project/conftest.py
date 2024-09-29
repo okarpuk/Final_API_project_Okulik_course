@@ -1,29 +1,29 @@
 import pytest
-from endpoints.create_product import CreateProduct
-from endpoints.update_product import UpdateProduct
-from endpoints.delete_product import DeleteProduct
+from endpoints.create_meme import CreateMeme
+from endpoints.update_meme import UpdateMeme
+from endpoints.delete_meme import DeleteMeme
 
 
 @pytest.fixture()
-def create_product_endpoint():
-    return CreateProduct()
+def create_meme_endpoint():
+    return CreateMeme()
 
 
 @pytest.fixture()
-def update_product_endpoint():
-    return UpdateProduct()
+def update_meme_endpoint():
+    return UpdateMeme()
 
 
 @pytest.fixture()
-def delete_product_endpoint():
-    return DeleteProduct()
+def delete_meme_endpoint():
+    return DeleteMeme()
 
 
 @pytest.fixture()
-def post_id(create_product_endpoint):
+def meme_id(create_meme_endpoint):
     payload = {"title": "test product 1", "price": 100, "description": "the best product"}
-    create_product_endpoint.create_new_product(payload)
-    yield create_product_endpoint.post_id
+    create_meme_endpoint.create_new_meme(payload)
+    yield create_meme_endpoint.meme_id
 
 
 @pytest.fixture(scope='session')
