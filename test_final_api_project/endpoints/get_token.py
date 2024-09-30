@@ -11,7 +11,7 @@ class GetToken(Endpoint):
     def get_authorization_token(self, payload, headers=None):
         headers = headers if headers else self.headers
         self.response = requests.post(
-            f'{self.url}/meme',
+            f'{self.url}/authorize',
             json=payload,
             headers=headers
         )

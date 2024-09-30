@@ -10,6 +10,12 @@ def auth_token_endpoint():
     return GetToken()
 
 
+@pytest.fixture
+def authorization_token(auth_token_endpoint):
+    token = auth_token_endpoint.get_authorization_token(payload={"name": "Okarpuk"})
+    return token
+
+
 @pytest.fixture()
 def create_meme_endpoint():
     return CreateMeme()
@@ -26,9 +32,9 @@ def delete_meme_endpoint():
 
 
 @pytest.fixture()
-def meme_id(create_meme_endpoint):
-    payload = {"title": "test product 1", "price": 100, "description": "the best product"}
-    create_meme_endpoint.create_new_meme(payload)
+def meme_id(authorization_token, create_meme_endpoint):
+    payload = {"text": "meme_1", "url": "https//:1", "tags": (1, "one", 5, True), "info": {"tag_1": "tag 1 description"}}
+    create_meme_endpoint.create_new_meme(payload, headers=authorization_token)
     yield create_meme_endpoint.meme_id
 
 

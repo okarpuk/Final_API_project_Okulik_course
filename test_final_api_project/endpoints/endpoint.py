@@ -11,9 +11,9 @@ class Endpoint:
 
 
 
-    @allure.step('Check that title is the same as sent')
-    def check_response_title_is_correct(self, title):
-        assert self.json['title'] == title, f"Need title {title} but get {self.json['title']}"
+    @allure.step('Check that text is the same as sent')
+    def check_response_text_is_correct(self, text):
+        assert self.json['text'] == text, f"Need title {text} but get {self.json['text']}"
 
     @allure.step('Check that response is 200')
     def check_that_status_is_200(self):

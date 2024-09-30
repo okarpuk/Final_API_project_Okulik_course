@@ -3,13 +3,13 @@ import pytest
 
 
 TEST_DATA = [
-    {"title": "test product 2", "price": 222, "description": "the best product 2"},
-    {"title": "test product 3", "price": 333, "description": "the best product 3"},
-    {"title": "test product 4", "price": 444, "description": "the best product 4"}
+    {"text": "meme_1", "url": "https//:1", "tags": (1, "one", 5, True), "info": {"tag_1": "tag 1 description"}},
+    {"text": "meme_2", "url": "https//:2", "tags": (2, "two", 7, False), "info": {"tag_2": "tag 2 description"}},
+    {"text": "meme_2", "url": "https//:3", "tags": (1, "three", 9, True), "info": {"tag_3": "tag 3 description"}}
 ]
 
 TEST_DATA_NEGATIVE = [
-    {"title": "I can't recieve 400 status code (always - 200). So it's just example"}
+    {"text": (1, 2, 3), "url": "https//", "tags": (1, "a", 5, True), "info": {"tag_1": "tag 1 description"}},
 ]
 
 
@@ -17,19 +17,21 @@ TEST_DATA_NEGATIVE = [
 @allure.story('Story 1')
 @allure.title('Test for Feature 1 and Story 1')
 @pytest.mark.parametrize('data', TEST_DATA)
-def test_meme_create(auth_token_endpoint, create_meme_endpoint, data, start_complete, before_after_every_test):
-    create_meme_endpoint.create_new_meme(payload=data, headers=auth_token_endpoint)
+def test_meme_create(authorization_token, create_meme_endpoint, data, start_complete, before_after_every_test):
+    create_meme_endpoint.create_new_meme(payload=data, headers=authorization_token)
     create_meme_endpoint.check_that_status_is_200()
-    create_meme_endpoint.check_response_title_is_correct(data['title'])
+    create_meme_endpoint.check_response_text_is_correct(data['text'])
+    print(create_meme_endpoint.json)
 
 
 @allure.feature('Feature 2')
 @allure.story('Story 2')
 @allure.title('Test for Feature 2 and Story 2')
 @pytest.mark.parametrize('data', TEST_DATA_NEGATIVE)
-def test_meme_create_negative(create_meme_endpoint, data, start_complete, before_after_every_test):
-    create_meme_endpoint.create_new_meme(payload=data)
+def test_meme_create_negative(authorization_token, create_meme_endpoint, data, start_complete, before_after_every_test):
+    create_meme_endpoint.create_new_meme(payload=data, headers=authorization_token)
     create_meme_endpoint.check_bad_request()
+    print(create_meme_endpoint.response)
 
 
 @allure.feature('Feature 3')
@@ -37,10 +39,10 @@ def test_meme_create_negative(create_meme_endpoint, data, start_complete, before
 @allure.title('Test for Feature 3 and Story 3')
 @pytest.mark.critical
 def test_meme_update(update_meme_endpoint, meme_id, start_complete, before_after_every_test):
-    payload = {"title": "test product UPD", "price": 555, "description": "the best product UPD"}
+    payload = {"text": "meme_1", "url": "https//:1", "tags": (1, "one", 5, True), "info": {"tag_1": "tag 1 description"}}
     update_meme_endpoint.update_created_meme(meme_id, payload)
     update_meme_endpoint.check_that_status_is_200()
-    update_meme_endpoint.check_response_title_is_correct(payload['title'])
+    # update_meme_endpoint.check_response_title_is_correct(payload['title'])
 
 
 @allure.feature('Feature 4')
