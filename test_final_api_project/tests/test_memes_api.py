@@ -8,19 +8,29 @@ TEST_DATA = [
     {"text": "meme_2", "url": "http://example.com/meme3.jpg", "tags": [1, "three", 9, True], "info": {"author": "author1", "date": "2024-01-01"}}
 ]
 
+UPDATE_DATA = [
+    {"text": "Updated Meme", "url": "http://example.com/updated_meme.jpg", "tags": ["updated", "meme"], "info": {"author": "user456", "date": "2024-01-02"}}
+]
+
 TEST_DATA_NEGATIVE = [
     {"text": (1, 2, 3), "url": 1, "tags": (1, "a", 5, True), "info": {"tag_1": "tag 1 description"}},
 ]
 
-UPDATE_DATA = [
-    {"text": "Updated Meme", "url": "http://example.com/updated_meme.jpg", "tags": ["updated", "meme"], "info": {"author": "user456", "date": "2024-01-02"}}
-]
+
+@allure.feature('Invalid Authorization')
+@allure.story('Requesting token with invalid credentials')
+@allure.title('Test invalid authorization')
+def test_invalid_authorization(invalid_authorization_endpoint):
+    invalid_authorization_endpoint.invalid_authorization()
+    invalid_authorization_endpoint.check_400_bad_request()
+
 
 @allure.feature('Request without authorization')
 @allure.story('Requesting info without authorization')
 @allure.title('Test request info without authorization')
 def test_get_all_memes_without_authorization(get_memes_endpoint):
-    get_memes_endpoint.get_memes(headers=None)
+    headers_without_authorization = {'Content-type': 'application/json'}
+    get_memes_endpoint.get_memes(headers=headers_without_authorization)
     get_memes_endpoint.check_401_bad_request()
 
 

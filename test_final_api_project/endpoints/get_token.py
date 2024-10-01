@@ -1,11 +1,11 @@
 import requests
-import allure
 
 from test_final_api_project.endpoints.endpoint import Endpoint
 
 
 class GetToken(Endpoint):
     token_cache = None
+
 
     def get_new_token(self):
         payload = {'name': 'test_user'}
@@ -29,3 +29,11 @@ class GetToken(Endpoint):
             return self.token_cache
         else:
             return self.get_new_token()
+
+
+    def invalid_authorization(self):
+        payload = {'name': [1, 3, 5]}
+        self.response = requests.post(
+            f'{self.url}/authorize',
+            json=payload
+        )

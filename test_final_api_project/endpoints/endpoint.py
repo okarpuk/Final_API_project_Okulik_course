@@ -16,9 +16,11 @@ class Endpoint:
     def check_400_bad_request(self):
         assert self.response.status_code == 400, f"Need status code - 400 but got {self.response.status_code}"
 
+
     @allure.step('Check that 401 error received')
     def check_401_bad_request(self):
         assert self.response.status_code == 401, f"Need status code - 400 but got {self.response.status_code}"
+
 
     @allure.step('Check that 404 error received')
     def check_404_bad_request(self):
