@@ -5,16 +5,27 @@ from test_final_api_project.endpoints.endpoint import Endpoint
 
 
 class GetToken(Endpoint):
-    token = None
+    token_cache = None
 
-    @allure.step('Get token')
-    def get_authorization_token(self, payload, headers=None):
-        headers = headers if headers else self.headers
-        self.response = requests.post(
+    def get_new_token(self):
+        payload = {'name': 'test_user'}
+        response = requests.post(
             f'{self.url}/authorize',
-            json=payload,
-            headers=headers
+            json=payload
         )
-        self.json = self.response.json()
-        self.token = self.json['token']
-        return {"Authorization": self.token}
+        if response.status_code == 200:
+            token = response.json().get('token')
+            self.token_cache = token
+            return token
+        else:
+            raise Exception(f"Failed to get token. Status code: {response.status_code}")
+
+    def check_token_validity(self, token):
+        response = requests.get(f'{self.url}/authorize/{token}')
+        return response.status_code == 200
+
+    def get_token(self):
+        if self.token_cache and self.check_token_validity(self.token_cache):
+            return self.token_cache
+        else:
+            return self.get_new_token()
