@@ -1,3 +1,5 @@
+import json
+
 import allure
 import pytest
 
@@ -15,6 +17,22 @@ TEST_DATA_NEGATIVE = [
 UPDATE_DATA = [
     {"text": "Updated Meme", "url": "http://example.com/updated_meme.jpg", "tags": ["updated", "meme"], "info": {"author": "user456", "date": "2024-01-02"}}
 ]
+
+@allure.feature('Get all memes')
+@allure.story('Getting all memes')
+@allure.title('Test getting all memes')
+def test_get_all_memes(authorization_token, get_memes_endpoint):
+    get_memes_endpoint.get_memes(headers=authorization_token)
+    get_memes_endpoint.check_that_status_is_200()
+
+
+@allure.feature('Get memes by ID')
+@allure.story('Getting meme by ID')
+@allure.title('Test getting meme by ID')
+@pytest.mark.parametrize('meme_id', [1, 5, 7])
+def test_get_meme_by_id(authorization_token, get_memes_endpoint, meme_id):
+    get_memes_endpoint.get_meme_by_id(meme_id=meme_id, headers=authorization_token)
+    get_memes_endpoint.check_that_status_is_200()
 
 
 @allure.feature('Create new meme')

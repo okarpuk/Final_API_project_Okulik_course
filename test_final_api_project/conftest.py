@@ -1,5 +1,6 @@
 import pytest
 from endpoints.get_token import GetToken
+from endpoints.get_meme import GetMemes
 from endpoints.create_meme import CreateMeme
 from endpoints.update_meme import UpdateMeme
 from endpoints.delete_meme import DeleteMeme
@@ -9,6 +10,11 @@ from endpoints.delete_meme import DeleteMeme
 def authorization_token():
     token = GetToken().get_token()
     return {'Authorization': token, 'Content-type': 'application/json'}
+
+
+@pytest.fixture
+def get_memes_endpoint():
+    return GetMemes()
 
 
 @pytest.fixture
