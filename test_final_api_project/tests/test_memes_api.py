@@ -3,17 +3,23 @@ import pytest
 
 
 TEST_DATA = [
-    {"text": "meme_1", "url": "http://example.com/meme1.jpg", "tags": [1, "one", 5, True], "info": {"author": "author1", "date": "2024-01-01"}},
-    {"text": "meme_2", "url": "http://example.com/meme2.jpg", "tags": [2, "two", 7, False], "info": {"author": "author1", "date": "2024-01-01"}},
-    {"text": "meme_2", "url": "http://example.com/meme3.jpg", "tags": [1, "three", 9, True], "info": {"author": "author1", "date": "2024-01-01"}}
+    {"text": "Created Meme", "url": "http://example.com/created_meme.jpg", "tags": ["created", "created_meme"], "info": {"author": "user123", "date": "2024-01-02"}},
+    {"text": "12345", "url": "http://example.com/created_meme_111.jpg", "tags": [1, "created_meme", True], "info": {"author": 123, "date": False}},
+    {"text": "@#$^&*", "url": "http://example.com/created_meme_222.jpg", "tags": ["@#$%", "$%^&"], "info": {"111": "@@##$", "date": "2024.01.02"}}
 ]
 
 UPDATE_DATA = [
-    {"text": "Updated Meme", "url": "http://example.com/updated_meme.jpg", "tags": ["updated", "meme"], "info": {"author": "user456", "date": "2024-01-02"}}
+    {"text": "Updated Meme", "url": "http://example.com/updated_meme.jpg", "tags": ["updated", "meme"], "info": {"author": "user456", "date": "2024-01-02"}},
+    {"text": "12345", "url": "http://example.com/updated_meme_111.jpg", "tags": [1, 5], "info": {"author": 123, "date": "2024/01/02"}},
+    {"text": "@#$^&*", "url": "http://example.com/updated_meme_222.jpg", "tags": ["@#$%", True], "info": {"111": "@@##$", "date": "2024.01.02"}}
 ]
 
 TEST_DATA_NEGATIVE = [
-    {"text": (1, 2, 3), "url": 1, "tags": (1, "a", 5, True), "info": {"tag_1": "tag 1 description"}},
+    {"text": (1, 2, 3), "url": "http://example.com/updated_meme_222.jpg", "tags": [111, "meme"], "info": {"tag_1": "tag 1 description"}},
+    {"text": "Updated Meme", "url": False, "tags": [111, "meme"], "info": {"tag_1": "tag 1 description"}},
+    {"text": "Updated Meme", "url": "http://example.com/updated_meme_222.jpg", "tags": False, "info": {"tag_1": "tag 1 description"}},
+    {"text": "Updated Meme", "url": "http://example.com/updated_meme_222.jpg", "tags": [111, "meme"], "info": True},
+
 ]
 
 
@@ -24,7 +30,6 @@ def test_invalid_authorization(invalid_authorization_endpoint):
     invalid_authorization_endpoint.invalid_authorization()
     invalid_authorization_endpoint.check_400_bad_request()
 
-
 @allure.feature('Request without authorization')
 @allure.story('Requesting info without authorization')
 @allure.title('Test request info without authorization')
@@ -33,14 +38,12 @@ def test_get_all_memes_without_authorization(get_memes_endpoint):
     get_memes_endpoint.get_memes(headers=headers_without_authorization)
     get_memes_endpoint.check_401_bad_request()
 
-
 @allure.feature('Get all memes')
 @allure.story('Getting all memes')
 @allure.title('Test getting all memes')
 def test_get_all_memes(authorization_token, get_memes_endpoint):
     get_memes_endpoint.get_memes(headers=authorization_token)
     get_memes_endpoint.check_that_status_is_200()
-
 
 @allure.feature('Get memes by ID')
 @allure.story('Getting meme by ID')
@@ -50,7 +53,6 @@ def test_get_meme_by_id(authorization_token, get_memes_endpoint, meme_id):
     get_memes_endpoint.get_meme_by_id(meme_id=meme_id, headers=authorization_token)
     get_memes_endpoint.check_that_status_is_200()
 
-
 @allure.feature('Get memes by ID - negative')
 @allure.story('Getting meme by ID - negative')
 @allure.title('Test getting meme by ID - negative')
@@ -58,7 +60,6 @@ def test_get_meme_by_id(authorization_token, get_memes_endpoint, meme_id):
 def test_get_meme_by_id_negative(authorization_token, get_memes_endpoint, meme_id):
     get_memes_endpoint.get_meme_by_id(meme_id=meme_id, headers=authorization_token)
     get_memes_endpoint.check_404_bad_request()
-
 
 @allure.feature('Create new meme')
 @allure.story('Creating new meme')
@@ -69,7 +70,6 @@ def test_meme_create(authorization_token, create_meme_endpoint, data):
     create_meme_endpoint.check_that_status_is_200()
     create_meme_endpoint.check_response_text_is_correct(data['text'])
 
-
 @allure.feature('Create meme - negative')
 @allure.story('Creating meme - negative')
 @allure.title('Test creating meme - negative')
@@ -77,7 +77,6 @@ def test_meme_create(authorization_token, create_meme_endpoint, data):
 def test_meme_create_negative(authorization_token, create_meme_endpoint, data):
     create_meme_endpoint.create_new_meme(payload=data, headers=authorization_token)
     create_meme_endpoint.check_400_bad_request()
-
 
 @allure.feature('Update Meme')
 @allure.story('Updating an existing meme')
@@ -89,7 +88,6 @@ def test_meme_update(authorization_token, update_meme_endpoint, meme_id, update_
     update_meme_endpoint.check_that_status_is_200()
     update_meme_endpoint.check_response_text_is_correct(update_data['text'])
 
-
 @allure.feature('Update Meme - invalid data')
 @allure.story('Updating an existing meme - invalid data')
 @allure.title('Test updating a meme with invalid data')
@@ -98,7 +96,6 @@ def test_meme_update_invalid_data(authorization_token, update_meme_endpoint, mem
     payload = {'id': meme_id, 'text': update_data['text'], 'url': update_data['url'], 'tags': update_data['tags'], 'info': update_data['info']}
     update_meme_endpoint.update_existing_meme(meme_id=meme_id, payload=payload, headers=authorization_token)
     update_meme_endpoint.check_400_bad_request()
-
 
 @allure.feature('Update Meme - not all data')
 @allure.story('Updating an existing meme - not all data')
@@ -109,14 +106,12 @@ def test_meme_update_not_all_data(authorization_token, update_meme_endpoint, mem
     update_meme_endpoint.update_existing_meme(meme_id=meme_id, payload=payload, headers=authorization_token)
     update_meme_endpoint.check_400_bad_request()
 
-
 @allure.feature('Delete Meme')
 @allure.story('Deleting an existing meme')
 @allure.title('Test deleting a meme')
 def test_meme_delete(authorization_token, delete_meme_endpoint, meme_id):
     delete_meme_endpoint.delete_meme(meme_id=meme_id, headers=authorization_token)
     delete_meme_endpoint.check_that_status_is_200()
-
 
 @allure.feature('Delete Meme - invalid ID')
 @allure.story('Deleting an meme - invalid ID')
