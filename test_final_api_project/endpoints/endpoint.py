@@ -28,12 +28,30 @@ class Endpoint:
 
 
     @allure.step('Check that text is the same as sent')
-    def check_response_text_is_correct(self, expected_text):
+    def check_response_data_is_correct(self, expected_data):
         response_json = self.response.json()
-        assert response_json.get('text') == expected_text, f"Expected text '{expected_text}', got {response_json.get('text')}"
+        print(f"Data from response: {response_json}")  # info string - TO DELETE
+        assert response_json['text'] == expected_data['text'], "Text does not match"
+        assert response_json['url'] == expected_data['url'], "URL does not match"
+        # assert response_json['updated_by'] == expected_data['updated_by'], "Updated_by does not match"
+        assert response_json['info'] == expected_data['info'], "Info does not match"
+        assert response_json['tags'] == expected_data['tags'], "Tags do not match"
+
+
 
 
     @allure.step('Check that returned meme ID is correct')
     def check_response_meme_id_is_correct(self, expected_meme_id):
         response_json = self.response.json()
+        print(f"Meme ID from response: {response_json.get('id')}")  # info string - TO DELETE
         assert response_json.get('id') == expected_meme_id, f"Expected meme ID '{expected_meme_id}', got {response_json.get('id')}"
+
+
+    @allure.step('Check that JSON keys are correct')
+    def check_response_json_keys_are_correct(self, expected_json_keys):
+        response_json = self.response.json()
+        for key in expected_json_keys:
+            print(f"JSON keys from response: {key}")  # info string - TO DELETE
+            assert key in response_json, f"Key '{key}' is missing in the JSON response"
+
+    
