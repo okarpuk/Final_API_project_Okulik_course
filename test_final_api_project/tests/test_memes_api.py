@@ -24,14 +24,12 @@ TEST_DATA_NEGATIVE = [
 
 expected_json_keys = ['id', 'info', 'tags', 'text', 'updated_by', 'url']
 
-
 @allure.feature('Invalid Authorization')
 @allure.story('Requesting token with invalid credentials')
 @allure.title('Test invalid authorization')
 def test_invalid_authorization(invalid_authorization_endpoint):
     invalid_authorization_endpoint.invalid_authorization()
     invalid_authorization_endpoint.check_400_bad_request()
-
 
 @allure.feature('Request without authorization')
 @allure.story('Requesting info without authorization')
@@ -41,14 +39,12 @@ def test_get_all_memes_without_authorization(get_memes_endpoint):
     get_memes_endpoint.get_memes(headers=headers_without_authorization)
     get_memes_endpoint.check_401_bad_request()
 
-
 @allure.feature('Get all memes')
 @allure.story('Getting all memes')
 @allure.title('Test getting all memes')
 def test_get_all_memes(authorization_token, get_memes_endpoint):
     get_memes_endpoint.get_memes(headers=authorization_token)
     get_memes_endpoint.check_that_status_is_200()
-
 
 @allure.feature('Get memes by ID')
 @allure.story('Getting meme by ID')
@@ -60,7 +56,6 @@ def test_get_meme_by_id(authorization_token, get_memes_endpoint, meme_id):
     get_memes_endpoint.check_response_meme_id_is_correct(meme_id)
     get_memes_endpoint.check_response_json_keys_are_correct(expected_json_keys)
 
-
 @allure.feature('Get memes by ID - negative')
 @allure.story('Getting meme by ID - negative')
 @allure.title('Test getting meme by ID - negative')
@@ -69,7 +64,6 @@ def test_get_meme_by_id_negative(authorization_token, get_memes_endpoint, meme_i
     get_memes_endpoint.get_meme_by_id(meme_id=meme_id, headers=authorization_token)
     get_memes_endpoint.check_404_bad_request()
 
-
 @allure.feature('Create new meme')
 @allure.story('Creating new meme')
 @allure.title('Test creating meme')
@@ -77,10 +71,8 @@ def test_get_meme_by_id_negative(authorization_token, get_memes_endpoint, meme_i
 def test_meme_create(authorization_token, create_meme_endpoint, data):
     create_meme_endpoint.create_new_meme(payload=data, headers=authorization_token)
     create_meme_endpoint.check_that_status_is_200()
-    create_meme_endpoint.check_response_json_keys_are_correct(expected_json_keys)
     create_meme_endpoint.check_response_data_is_correct(expected_data=data)
-
-
+    create_meme_endpoint.check_response_json_keys_are_correct(expected_json_keys)
 
 @allure.feature('Create meme - negative')
 @allure.story('Creating meme - negative')
@@ -89,7 +81,6 @@ def test_meme_create(authorization_token, create_meme_endpoint, data):
 def test_meme_create_negative(authorization_token, create_meme_endpoint, data):
     create_meme_endpoint.create_new_meme(payload=data, headers=authorization_token)
     create_meme_endpoint.check_400_bad_request()
-
 
 @allure.feature('Update Meme')
 @allure.story('Updating an existing meme')
@@ -100,7 +91,7 @@ def test_meme_update(authorization_token, update_meme_endpoint, meme_id, update_
     update_meme_endpoint.update_existing_meme(meme_id=meme_id, payload=payload, headers=authorization_token)
     update_meme_endpoint.check_that_status_is_200()
     update_meme_endpoint.check_response_data_is_correct(expected_data=update_data)
-
+    update_meme_endpoint.check_response_json_keys_are_correct(expected_json_keys)
 
 @allure.feature('Update Meme - invalid data')
 @allure.story('Updating an existing meme - invalid data')
@@ -123,14 +114,18 @@ def test_meme_update_not_all_data(authorization_token, update_meme_endpoint, mem
 @allure.feature('Delete Meme')
 @allure.story('Deleting an existing meme')
 @allure.title('Test deleting a meme')
-def test_meme_delete(authorization_token, delete_meme_endpoint, meme_id):
+def test_meme_delete(authorization_token, delete_meme_endpoint, get_memes_endpoint, meme_id):
     delete_meme_endpoint.delete_meme(meme_id=meme_id, headers=authorization_token)
     delete_meme_endpoint.check_that_status_is_200()
+    expected_message = f"Meme with id {meme_id} successfully deleted"
+    delete_meme_endpoint.check_response_contains_text(expected_message)
+    get_memes_endpoint.get_meme_by_id(meme_id=meme_id, headers=authorization_token)
+    get_memes_endpoint.check_404_bad_request()
 
 @allure.feature('Delete Meme - invalid ID')
 @allure.story('Deleting an meme - invalid ID')
 @allure.title('Test deleting a meme - invalid ID')
 @pytest.mark.parametrize('meme_id', [-2, 0, 'abc'])
-def test_meme_delete(authorization_token, delete_meme_endpoint, meme_id):
+def test_invalid_meme_delete(authorization_token, delete_meme_endpoint, meme_id):
     delete_meme_endpoint.delete_meme(meme_id=meme_id, headers=authorization_token)
     delete_meme_endpoint.check_404_bad_request()
